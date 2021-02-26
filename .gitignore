@@ -1,0 +1,8 @@
+.deps/
+*.o
+*.elf
+*.hex
+*.tmp
+*.pdn
+
+.vscode/
