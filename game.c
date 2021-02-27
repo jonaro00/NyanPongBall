@@ -19,7 +19,7 @@ int debug_dummy;
 
 Unit ball;
 AnimUnit nyan;
-float nyan_speed = 0.6;
+#define NYAN_SPEED_Y 0.6
 int score = 0;
 
 void game_init(){
@@ -57,8 +57,8 @@ void game_init(){
     screen_display_string(12,20,"Nyan Pong Ball");
     screen_render();
 
-    init_Unit(&ball,16,40,0.8F,2,11,11,&t_ball[0][0],1);
-    init_AnimUnit(&nyan,2,0,0,0,14,23,&t_nyancat[0][0][0],-1,NYANCAT_FRAMES);
+    init_Unit(&ball,16,40,0.8F,1.8F,11,11,&t_ball[0][0],1);
+    init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],-1,NYANCAT_FRAMES);
 }
 // ### INTERRUPTS ### //
 void user_isr(){
@@ -109,20 +109,26 @@ void game_tick(){
             if(is_pressed(BTN2)) btn_hold(2);
             if(is_pressed(BTN1)) btn_hold(1);
             // Ball
-            if(ball.y < 1 || ball.y+ball.h >= SCREEN_HEIGHT-1) ball.dy = -ball.dy; // top/bot wall bounce
-            if(ball.x+ball.w >= SCREEN_WIDTH && ball.dx > 0)   ball.dx = -ball.dx; // right wall bounce
+            if     (ball.y < 1)                       ball.dy = abs(ball.dy); // top wall bounce
+            else if(ball.y+ball.h >= SCREEN_HEIGHT-1) ball.dy = -abs(ball.dy); // bot wall bounce
+            float yd = (ball.y+(ball.h-1)/2)-(nyan.y+(nyan.h-1)/2);
+            if(ball.x+ball.w > SCREEN_WIDTH-1 && ball.dx > 0) ball.dx = -ball.dx; // right wall bounce
             else if(abs(ball.x - (nyan.x+nyan.w-3)) < 2 && // ball x at nyan nose
-                    abs((ball.y+(ball.h-1)/2)-(nyan.y+(nyan.h-1)/2)) < nyan.h/2 && // ball center within nyan y
-                    ball.dx < 0) // ball going left
-                    { // player collision
+                    abs(yd) < nyan.h/2 &&                  // ball center within nyan y
+                    ball.dx < 0)                           // ball going left
+            {   // Ball & nyan collision
                 ball.dx = -ball.dx;
+                if(!((ball.dy < 0 && yd <= 1) || (ball.dy > 0 && yd >= -1)))
+                    ball.dy = bound(-1.2, ball.dy+yd/2, 1.2);
             }
             ball.x += ball.dx; ball.y += ball.dy;
             ball.x += ball.x < -30 ? 170 : 0; // noob mode
 
             // ### GRAPHICS ### //
-            screen_draw_box(0,30,1,SCREEN_WIDTH,1);
-            screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1);
+            screen_draw_box(0,30,1,SCREEN_WIDTH,1); // top wall
+            screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1); // bot wall
+            screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1); // right wall
+
 
             draw_Unit(&ball);
             draw_AnimUnit(&nyan);
@@ -157,11 +163,11 @@ void btn_press(int btn_i){
 void btn_hold(int btn_i){
     switch(btn_i){
         case 3: // W
-            nyan.y -= nyan_speed;
+            nyan.y -= NYAN_SPEED_Y;
             nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
             break;
         case 2: // S
-            nyan.y += nyan_speed;
+            nyan.y += NYAN_SPEED_Y;
             nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
             break;
         case 4: // A
