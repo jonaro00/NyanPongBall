@@ -1,6 +1,5 @@
 
 #include <stdint.h>
-#include <pic32mx.h>
 #include "game.h"
 
 const uint8_t const font[] = {

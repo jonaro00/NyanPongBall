@@ -72,11 +72,15 @@ void display_init(void) {
 
 uint8_t screen[SCREEN_HEIGHT][SCREEN_WIDTH];
 
-void screen_reset(){
-    int y, x;
-    for (y = 0; y < SCREEN_HEIGHT; y++)
-        for (x = 0; x < SCREEN_WIDTH; x++)
-            screen[y][x] = 0;
+void screen_fill(uint8_t p){
+    uint8_t y, x;
+    for(y = 0; y < SCREEN_HEIGHT; y++)
+        for(x = 0; x < SCREEN_WIDTH; x++)
+            screen[y][x] = p;
+}
+
+int is_on_screen(int y, int x){
+    return (y >= 0 && y < SCREEN_HEIGHT && x >= 0 && x < SCREEN_WIDTH);
 }
 
 void screen_render(){
@@ -95,28 +99,26 @@ void screen_render(){
             spi_send_recv(screen_get_strip(i*8, x));
         }
     }
-    screen_reset();
+    screen_fill(0);
 }
 
 uint8_t screen_get_strip(uint8_t y, uint8_t x){
     uint8_t k, b = 0;
-    for(k = 0; k < 8; k++){
-        b |= (screen[y+k][x] << k);
-    }
+    for(k = 0; k < 8; k++)
+        b |= screen[y+k][x] << k;
     return b;
 }
 
-void screen_set_strip(uint8_t y, uint8_t x, uint8_t b){
-    uint8_t k, sy, sx;
+void screen_set_strip(int y, int x, uint8_t b){
+    int k, sy;
     for(k = 0; k < 8; k++){
-        sy = y+k; sx = x;
-        if(sy < 0 || sy >= SCREEN_HEIGHT || sx < 0 || sx >= SCREEN_WIDTH)
-            continue;
-        screen[sy][sx] = (b >> k) & 0x1;
+        sy = y+k;
+        if(!is_on_screen(sy, x)) continue;
+        screen[sy][x] = (b >> k) & 0x1;
     }
 }
 
-void screen_display_string(uint8_t y, uint8_t x, char *s){
+void screen_display_string(int y, int x, char *s){
     uint8_t c, k;
     for(c = 0; c < SCREEN_WIDTH / 6; c++){
         if(*s == 0) break;
@@ -126,39 +128,37 @@ void screen_display_string(uint8_t y, uint8_t x, char *s){
     }
 }
 
-void screen_display_texture(uint8_t y, uint8_t x, uint8_t h, uint8_t w, uint8_t *t){
-    int i, j;
-    uint8_t p, sy, sx;
+void screen_display_texture(int y, int x, uint8_t h, uint8_t w, uint8_t *t, int xdir){
+    int i, j, sy, sx, jj;
+    uint8_t p;
     for(i = 0; i < h; i++){
         for(j = 0; j < w; j++){
-            sy = y+i; sx = x+j;
-            if(sy < 0 || sy >= SCREEN_HEIGHT || sx < 0 || sx >= SCREEN_WIDTH)
-                continue;
+            jj = xdir > 0 ? j : w-1-j;
+            sy = y+i; sx = x+jj;
+            if(!is_on_screen(sy, sx)) continue;
             p = *(t+i*w+j);
-            if(p == 2)
-                continue;
+            if(p == 2) continue;
             screen[sy][sx] = p;
         }
     }
 }
 
-void screen_draw_box(uint8_t y, uint8_t x, uint8_t h, uint8_t w, uint8_t p){
-    uint8_t i, j, sy, sx;
+void screen_draw_box(int y, int x, uint8_t h, uint8_t w, uint8_t p){
+    int i, j, sy, sx;
     for(i = 0; i < h; i++){
         for(j = 0; j < w; j++){
             sy = y+i; sx = x+j;
-            if(sy < 0 || sy >= SCREEN_HEIGHT || sx < 0 || sx >= SCREEN_WIDTH)
-                continue;
+            if(!is_on_screen(sy, sx)) continue;
             screen[sy][sx] = p;
         }
     }
 }
 
-char debug_row1[] = "A76543210";
-char debug_row2[] = "D76543210";
+char debug_row1[] = "A=76543210";
+char debug_row2[] = "D=76543210";
 void print_debug(const volatile int* addr){
-    num32asc(debug_row1+1, (int)addr);
-    num32asc(debug_row2+1, *addr);
-    screen_display_string(0, 56, debug_row1);
-    screen_display_string(8, 56, debug_row2);
+    num32asc(debug_row1+2, (int)addr);
+    num32asc(debug_row2+2, *addr);
+    screen_display_string(8, 60, debug_row1);
+    screen_display_string(16, 60, debug_row2);
 }

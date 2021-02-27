@@ -5,16 +5,22 @@
 
 
 #define FPS 60
-
 uint64_t game_ticks = 0;
-uint8_t game_started = 0;
+
+#define START 0
+#define MENU 1
+#define GAME 2
+uint8_t game_state = START;
 
 uint8_t DEBUG_MODE = 0;
-int* DEBUG_ADDR = 0;
+int* DEBUG_ADDR = &game_state;
+int debug_dummy;
 
 
-Unit ball1;
+Unit ball;
 AnimUnit nyan;
+float nyan_speed = 0.6;
+int score = 0;
 
 void game_init(){
     // Configure timer 2
@@ -46,110 +52,125 @@ void game_init(){
 
 
     // START SCREEN
-    screen_draw_box(0,0,SCREEN_HEIGHT,SCREEN_WIDTH,1); // screen white
+    screen_fill(1); // screen white
     screen_draw_box(8,8,SCREEN_HEIGHT-16,SCREEN_WIDTH-16,0); // black box in middle
     screen_display_string(12,20,"Nyan Pong Ball");
     screen_render();
 
-    init_Unit(&ball1,16,40,0,0,11,11,&ball[0][0]);
-    init_AnimUnit(&nyan,2,0,0,0,14,23,&nyancat[0][0][0], NYANCAT_FRAMES);
+    init_Unit(&ball,16,40,0.8F,2,11,11,&t_ball[0][0],1);
+    init_AnimUnit(&nyan,2,0,0,0,14,23,&t_nyancat[0][0][0],-1,NYANCAT_FRAMES);
 }
-void user_isr( void )
-{
+// ### INTERRUPTS ### //
+void user_isr(){
+    // TIMER -- main clock
     if(IFS(0) & 0x100){ // check timer interrupt bit (8)
         IFS(0) &= ~0x100; // clear the interrupt flag bit
 
-        //######################
-        //GAMETICK
-        if(!DEBUG_MODE)
-            game_tick();
-        else
-            debug_screen();
-
-
+        game_tick(); // try to advance the game
     }
+    // SW1 - Toggle debug mode
     else if(IFS(0) & (0x80)){ // check SW1 interrupt bit
         IFS(0) &= ~(0x80); // clear int bit
-        PORTE++;
         DEBUG_MODE = DEBUG_MODE == 0 ? 1 : 0; // toggle debug mode
     }
 }
 void loop(){
-    // if(DEBUG_ADDR){
-    //     print_debug(DEBUG_ADDR);
-    //     screen_reset();
-    // }
-}
-
-void DEBUG(int* a){
-    DEBUG_ADDR = a;
-    // debug_screen();
-
-    while(!is_clicked(BTN1)){
-        getbtns();
-    }
+    //
 }
 
 void game_tick(){
+
+    // Get buttons pressed since last game_tick
     getbtns();
-    if(!game_started){
-        if(is_clicked(BTN4|BTN3|BTN2|BTN1)){game_started = 1;}
+
+    // Start screen check
+    if(game_state == START){
+        if(is_clicked(BTN4|BTN3|BTN2|BTN1))
+            game_state = GAME;
         return;
     }
 
+    // Debug pause check
+    if(DEBUG_MODE && !is_clicked(BTN1)) return;
 
-    if(is_clicked(BTN4)){btn_press(4);}
-    if(is_clicked(BTN3)){btn_press(3);}
-    if(is_clicked(BTN2)){btn_press(2);}
-    if(is_clicked(BTN1)){btn_press(1);}
-    if(is_pressed(BTN4)){btn_hold(4);}
-    if(is_pressed(BTN3)){btn_hold(3);}
-    if(is_pressed(BTN2)){btn_hold(2);}
-    if(is_pressed(BTN1)){btn_hold(1);}
+    switch(game_state){
+        case MENU:
+            break;
 
+        case GAME:
+            // ### MOVEMENT & COLLISIONS ### //
+            // Player
+            if(is_clicked(BTN4)) btn_press(4);
+            if(is_clicked(BTN3)) btn_press(3);
+            if(is_clicked(BTN2)) btn_press(2);
+            if(is_clicked(BTN1)) btn_press(1);
+            if(is_pressed(BTN4)) btn_hold(4);
+            if(is_pressed(BTN3)) btn_hold(3);
+            if(is_pressed(BTN2)) btn_hold(2);
+            if(is_pressed(BTN1)) btn_hold(1);
+            // Ball
+            if(ball.y < 1 || ball.y+ball.h >= SCREEN_HEIGHT-1) ball.dy = -ball.dy; // top/bot wall bounce
+            if(ball.x+ball.w >= SCREEN_WIDTH && ball.dx > 0)   ball.dx = -ball.dx; // right wall bounce
+            else if(abs(ball.x - (nyan.x+nyan.w-3)) < 2 && // ball x at nyan nose
+                    abs((ball.y+(ball.h-1)/2)-(nyan.y+(nyan.h-1)/2)) < nyan.h/2 && // ball center within nyan y
+                    ball.dx < 0) // ball going left
+                    { // player collision
+                ball.dx = -ball.dx;
+            }
+            ball.x += ball.dx; ball.y += ball.dy;
+            ball.x += ball.x < -30 ? 170 : 0; // noob mode
 
-    draw_Unit(&ball1);
-    draw_AnimUnit(&nyan);
+            // ### GRAPHICS ### //
+            screen_draw_box(0,30,1,SCREEN_WIDTH,1);
+            screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1);
 
+            draw_Unit(&ball);
+            draw_AnimUnit(&nyan);
+            game_ticks++;
+
+            break;
+        default:
+            break; // lol wut
+    }
+
+    // Debug info goes on top of everything else
+    if(DEBUG_MODE) print_debug(DEBUG_ADDR);
+
+    // Render the frame
     screen_render();
-
-    PORTE++;
-    game_ticks++;
 }
 
 void btn_press(int btn_i){
-
-    char q[] = {(btn_i+'0'), 0};
-    screen_display_string(16, 120, q);
-}
-void btn_hold(int btn_i){
-
-    char q[] = {(btn_i+'0'), 0};
-    screen_display_string(8, 120, q);
-
-    switch (btn_i){
-        case 4:
-            nyan.y += 1;
+    switch(btn_i){
+        case 3: // W
             break;
-        case 2:
-            nyan.y -= 1;
+        case 2: // S
+            break;
+        case 4: // A
+            break;
+        case 1: // D
             break;
         default:
             break;
     }
 }
-
-int x = 0, y = 0, dx = 1, dy = 1;
-void debug_screen(){
-
-    // DVD screensaver
-    x += dx; y += dy;
-    if (x+24 >= 56 || x < 0) dx = -dx;
-    if (y+8 >= SCREEN_HEIGHT || y < 0) dy = -dy;
-    screen_display_string(y, x, "DVD");
-
-    // DEBUG INFO
-    print_debug(DEBUG_ADDR);
-
-    screen_render();
+void btn_hold(int btn_i){
+    switch(btn_i){
+        case 3: // W
+            nyan.y -= nyan_speed;
+            nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
+            break;
+        case 2: // S
+            nyan.y += nyan_speed;
+            nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
+            break;
+        case 4: // A
+            nyan.xdir = -1;
+            break;
+        case 1: // D
+            nyan.xdir = 1;
+            break;
+        default:
+            break;
+    }
 }
