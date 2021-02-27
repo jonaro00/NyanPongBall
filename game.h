@@ -19,7 +19,8 @@ void debug_screen();
 #define SCREEN_WIDTH 128
 #define ANIM_SPEED 4
 void quicksleep(int cyc);
-void num32asc( char * s, int );
+void num32asc(char *s, int n);
+char *itoaconv(int num);
 uint8_t spi_send_recv(uint8_t data);
 void display_init(void);
 extern uint8_t screen[SCREEN_HEIGHT][SCREEN_WIDTH];
