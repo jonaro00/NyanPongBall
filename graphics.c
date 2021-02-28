@@ -153,8 +153,8 @@ void screen_display_string(int y, int x, char *s){
     uint8_t c, k;
     for(c = 0; c < CHAR_SPACES; c++){
         if(*s == 0) break;
-        for(k = 1; k < 7; k++)
-            screen_set_strip(y, x+c*6+k, font[*s*8 + k]);
+        for(k = 0; k < 6; k++)
+            screen_set_strip(y, x+c*6+k, font[*s*6 + k]);
         s++;
     }
 }

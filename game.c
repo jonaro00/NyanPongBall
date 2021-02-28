@@ -98,7 +98,7 @@ void main_tick(){
             game_state = MENU;
         screen_fill(1); // screen white
         screen_draw_box(8,8,SCREEN_HEIGHT-16,SCREEN_WIDTH-16,0); // black box in middle
-        screen_display_string(12,22,"Nyan Pong Ball"); // title
+        screen_display_string(12,23,"Nyan Pong Ball"); // title
         screen_render();
         return;
     }
@@ -266,9 +266,9 @@ void menu_main_init(){
 }
 void menu_main_tick(){
     screen_draw_box(0,61,SCREEN_HEIGHT,1,1);
-    screen_display_string(0,  62,  "Nyan");
-    screen_display_string(8,  83,  "Pong");
-    screen_display_string(16, 104, "Ball");
+    screen_display_string(0,  63,  "Nyan");
+    screen_display_string(8,  85,  "Pong");
+    screen_display_string(16, 107, "Ball");
     draw_AnimUnit(&nyan);
 }
 void menu_scores_init(){
