@@ -4,7 +4,7 @@
 #include "game.h"
 
 
-uint64_t game_ticks;
+uint32_t game_ticks = 0;
 int cooldown = 0;
 
 uint8_t DEBUG_MODE = 0;
@@ -124,10 +124,10 @@ void main_tick(){
                     menu_scores_tick();
                     break;
                 case MENU_GAMEOVER:
-                    if(is_clicked(BTN4)){name_pos = floorMod(name_pos - 1, 3); set_scroll_offset();}
+                    if(is_clicked(BTN4)){name_pos = floorMod(name_pos-1, 3); set_scroll_offset();}
                     if(is_clicked(BTN3)){menu_page = MENU_MAIN; return;}
                     if(is_clicked(BTN2)) ;
-                    if(is_clicked(BTN1)){name_pos = floorMod(name_pos + 1, 3); set_scroll_offset();}
+                    if(is_clicked(BTN1)){name_pos = floorMod(name_pos+1, 3); set_scroll_offset();}
                     if(menu_page_changed) menu_gameover_init();
                     menu_gameover_tick();
                     break;
@@ -209,7 +209,6 @@ void game_tick(){
         ccc++; i++;
     }
     screen_display_string(12, 50, score_str);
-    DEBUG_ADDR = score_str;
 
 
     draw_Unit(&ball);
@@ -282,10 +281,10 @@ void menu_gameover_init(){
     set_scroll_offset();
 }
 void menu_gameover_tick(){
-    screen_draw_box(0,55,SCREEN_HEIGHT,1,1);
-    screen_display_string(0, 56, score_str);
-    screen_display_string(8, 56, "Enter name");
-    screen_draw_box(26,78+name_pos*6,1,6,1);
+    screen_draw_box(0,56,SCREEN_HEIGHT,1,1);
+    screen_display_string(0, 59, score_str);
+    screen_display_string(8, 59, "Enter name:");
     name[name_pos] = alphabet[floorMod(getpot()/32 - scroll_offset, 32)];
-    screen_display_string(18,77, name);
+    screen_display_string(20, 82, name);
+    screen_draw_box(28,82+name_pos*6,1,6,1);
 }

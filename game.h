@@ -26,7 +26,7 @@ void menu_gameover_tick();
 // graphics.c
 #define SCREEN_HEIGHT 32
 #define SCREEN_WIDTH 128
-#define CHAR_SPACES SCREEN_WIDTH / 6
+#define CHAR_SPACES (SCREEN_WIDTH / 6 + 1) * SCREEN_HEIGHT / 8
 #define ANIM_SPEED 4
 void quicksleep(int cyc);
 void num32asc(char *s, int n);
