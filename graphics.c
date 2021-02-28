@@ -41,7 +41,7 @@ char *itoaconv(int num){
     itoa_buffer[ITOA_BUFSIZ - 1] = 0; /* Insert the end-of-string marker. */
     sign = num;                       /* Save sign. */
     if (num < 0 && num - 1 > 0){      /* Check for most negative integer */
-        for (i = 0; i < sizeof(maxneg); i += 1)
+        for (i = 0; i < sizeof(maxneg); i++)
             itoa_buffer[i + 1] = maxneg[i];
         i = 0;
     }
@@ -51,21 +51,21 @@ char *itoaconv(int num){
         i = ITOA_BUFSIZ - 2; /* Location for first ASCII digit. */
         do{
             itoa_buffer[i] = num % 10 + '0'; /* Insert next digit. */
-            num = num / 10;                  /* Remove digit from number. */
-            i -= 1;                          /* Move index to next empty position. */
+            num /= 10;                       /* Remove digit from number. */
+            i--;                             /* Move index to next empty position. */
         } while (num > 0);
         if (sign < 0){
             itoa_buffer[i] = '-';
-            i -= 1;
+            i--;
         }
     }
     /* Since the loop always sets the index i to the next empty position,
    * we must add 1 in order to return a pointer to the first occupied position. */
-    return (&itoa_buffer[i + 1]);
+    return &itoa_buffer[i + 1];
 }
 
 uint8_t spi_send_recv(uint8_t data) {
-    while(!(SPI2STAT & 0x08));
+    while(!(SPI2STAT & 8));
     SPI2BUF = data;
     while(!(SPI2STAT & 1));
     return SPI2BUF;
@@ -151,7 +151,7 @@ void screen_set_strip(int y, int x, uint8_t b){
 
 void screen_display_string(int y, int x, char *s){
     uint8_t c, k;
-    for(c = 0; c < SCREEN_WIDTH / 6; c++){
+    for(c = 0; c < CHAR_SPACES; c++){
         if(*s == 0) break;
         for(k = 1; k < 7; k++)
             screen_set_strip(y, x+c*6+k, font[*s*8 + k]);

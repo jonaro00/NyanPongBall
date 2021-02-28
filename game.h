@@ -6,17 +6,27 @@ void enable_interrupt();
 extern const uint8_t const font[128*8];
 
 // game.c
+#define FPS 60
 extern int* DEBUG_ADDR;
-void game_init();
 void loop();
+void main_tick();
+void game_init();
 void game_tick();
-void btn_press(int btn_i);
+void btn_click(int btn_i);
 void btn_hold(int btn_i);
-void debug_screen();
+void gameover_init();
+void gameover_tick();
+void menu_main_init();
+void menu_main_tick();
+void menu_scores_init();
+void menu_scores_tick();
+void menu_gameover_init();
+void menu_gameover_tick();
 
 // graphics.c
 #define SCREEN_HEIGHT 32
 #define SCREEN_WIDTH 128
+#define CHAR_SPACES SCREEN_WIDTH / 6
 #define ANIM_SPEED 4
 void quicksleep(int cyc);
 void num32asc(char *s, int n);
@@ -39,16 +49,19 @@ void print_debug(const volatile int* addr);
 #define BTN3 0b0100
 #define BTN2 0b0010
 #define BTN1 0b0001
-int getsw(void);
-int getbtns(void);
+int getsw();
+int getbtns();
 int is_clicked(int btnm);
 int is_pressed(int btnm);
+int getpot();
 
 // math.c
 int round(float f);
 float bound(float min, float f, float max);
 float avg(float a, float b);
 float abs(float f);
+int floorMod(int d, int m);
+int indexOf(char c, char *str);
 
 // textures.c
 extern uint8_t t_ball[11][11];
