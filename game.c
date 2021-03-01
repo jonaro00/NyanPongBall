@@ -43,6 +43,7 @@ int scoreboard_scroll, scoreboard_scroll_max;
 
 
 Unit ball;
+#define BALL_MAX_SPEED_Y 1.2
 AnimUnit nyan;
 #define NYAN_SPEED_Y 0.6
 int score;
@@ -177,8 +178,13 @@ void game_tick(){
             abs(yd) < nyan.h/2)                    // ball center within nyan y
     {   // Ball & nyan collision
         ball.dx = abs(ball.dx);
+        float my = 0;
         if(!((ball.dy < 0 && yd <= 1) || (ball.dy > 0 && yd >= -1)))
-            ball.dy = bound(-1.2, ball.dy+yd/2, 1.2);
+            my = yd / 3;
+        else if((ball.dy < 0 && yd <= -2) || (ball.dy > 0 && yd >= 2))
+            my = yd / 5;
+        ball.dy = bound(-BALL_MAX_SPEED_Y, ball.dy+my, BALL_MAX_SPEED_Y);
+
         score++;
     }
     ball.x += ball.dx; ball.y += ball.dy;
