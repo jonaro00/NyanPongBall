@@ -12,6 +12,10 @@ void init_Unit(Unit * u, float y, float x, float dy, float dx, uint8_t h, uint8_
     u->texture = texture;
     u->xdir = xdir;
 }
+void move_Unit(Unit * u){
+    u->x += u->dx;
+    u->y += u->dy;
+}
 void draw_Unit(Unit * u){
     screen_display_texture(round(u->y), round(u->x), u->h, u->w, u->texture, u->xdir);
 }

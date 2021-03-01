@@ -153,11 +153,14 @@ void main_tick(){
 void game_init(){
     game_ticks = 0;
     score = 0;
+    init_bg();
     init_Unit(&ball,16,40,0.8F,1.7F,11,11,&t_ball[0][0],1);
     init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
 }
 void game_tick(){
     CHEAT_MODE = getsw() & BTN4;
+
+    update_bg();
 
     // ### MOVEMENT & COLLISIONS ### //
     // Player
@@ -193,14 +196,17 @@ void game_tick(){
     if(ball.x < -40){game_state = GAMEOVER; return;}
 
     // ### GRAPHICS ### //
-    screen_draw_box(0,30,1,SCREEN_WIDTH,1); // top wall
-    screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1); // bot wall
-    screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1); // right wall
-
     // Score counter
     insert(itoaconv(score), score_str, 7, 1);
     screen_display_string(12, 50, score_str);
 
+    // Background
+    draw_bg();
+
+    // Walls
+    screen_draw_box(0,30,1,SCREEN_WIDTH,1);
+    screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1);
+    screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1);
 
     draw_Unit(&ball);
     draw_AnimUnit(&nyan);

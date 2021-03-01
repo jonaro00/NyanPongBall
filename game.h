@@ -1,4 +1,9 @@
 
+// bg.c
+void init_bg();
+void update_bg();
+void draw_bg();
+
 // ei.S
 void enable_interrupt();
 
@@ -96,6 +101,7 @@ typedef struct Unit{
     int xdir;
 } Unit;
 void init_Unit(Unit * u, float y, float x, float dy, float dx, uint8_t h, uint8_t w, uint8_t * texture, int xdir);
+void move_Unit(Unit * u);
 void draw_Unit(Unit * u);
 typedef struct AnimUnit{
     float y;
