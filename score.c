@@ -34,7 +34,7 @@ int get_scores_len(){
     return c;
 }
 char * get_scores_page(){
-    static char str[MAX_SCORES * 13];
+    static char str[MAX_SCORES * 14];
     char * cp;
     int i, ro = 0;
     uint8_t r, p;
@@ -44,7 +44,7 @@ char * get_scores_page(){
     for(r = 0; r < MAX_SCORES; r++){
         s = scores[r];
         if(s.score == 0 && s.name[0] == 0)break;
-        // Row format = "pp. NNN ssss\n"
+        // Row format = "pp. NNN sssss\n"
         // insert scoreboard position
         p = r + 1;
         if(p < 10) str[ro+1] = p + '0';
@@ -52,8 +52,8 @@ char * get_scores_page(){
         str[ro+2] = '.';
         insert(s.name, str, ro+4, 0); // insert name
         insert(itoaconv(s.score), str, ro+8, 0); // insert score
-        str[ro+12] = '\n';
-        ro += 13;
+        str[ro+13] = '\n';
+        ro += 14;
     }
     str[ro] = 0;
     return str;
