@@ -4,5 +4,6 @@
 *.hex
 *.tmp
 *.pdn
+*.gdoc
 
 .vscode/
