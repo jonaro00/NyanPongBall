@@ -150,20 +150,19 @@ void screen_set_strip(int y, int x, uint8_t b){
 }
 
 void screen_display_string(int y, int x, char *s){
-    uint8_t i, pcol, ro = 0, co = 0;
+    int i, ro = 0, co = 0;
     char c;
-    for(i = 0; i < CHAR_SPACES; i++){
-        c = *s;
-        s++;
+    uint8_t pcol;
+    for(i = 0; i < MAX_SCORES*13; i++){
+        c = *s++;
         if(c == 0) break;
         if(c == '\n'){ // insert newline, offset rest of string
             ro++;
-            if(ro > 3) break;
-            co=i;
+            co=i+1;
             continue;
         }
         for(pcol = 0; pcol < 6; pcol++)
-            screen_set_strip(y+ro*8, x+(i-co-ro)*6+pcol, font[c*6 + pcol]);
+            screen_set_strip(y+ro*8, x+(i-co)*6+pcol, font[c*6 + pcol]);
     }
 }
 

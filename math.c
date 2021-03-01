@@ -6,6 +6,14 @@ int round(float f){
     return f + (f >= 0 ? 0.5 : -0.5);
 }
 
+float min(float a, float b){
+    return a < b ? a : b;
+}
+
+float max(float a, float b){
+    return a > b ? a : b;
+}
+
 float bound(float min, float f, float max){
     return (f < min ? min : (f > max ? max : f));
 }

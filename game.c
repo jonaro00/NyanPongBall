@@ -50,6 +50,8 @@ int scroll_offset;
 void set_scroll_offset(){
     scroll_offset = getpot()/32 - indexOf(name[name_pos], alphabet);
 }
+char * scoreboard;
+int scoreboard_scroll, scoreboard_scroll_max;
 
 
 Unit ball;
@@ -117,18 +119,18 @@ void main_tick(){
                     break;
                 case MENU_SCORES:
                     if(is_clicked(BTN4)){menu_page = MENU_MAIN; return;}
-                    if(is_clicked(BTN3)) ;
-                    if(is_clicked(BTN2)) ;
                     if(is_clicked(BTN1)){game_state = GAME; return;}
                     if(menu_page_changed) menu_scores_init();
+                    if(is_pressed(BTN3)) scoreboard_scroll = max(scoreboard_scroll-1, 0);
+                    if(is_pressed(BTN2)) scoreboard_scroll = min(scoreboard_scroll+1, scoreboard_scroll_max);
                     menu_scores_tick();
                     break;
                 case MENU_GAMEOVER:
-                    if(is_clicked(BTN4)){name_pos = floorMod(name_pos-1, 3); set_scroll_offset();}
                     if(is_clicked(BTN3)){menu_page = MENU_MAIN; return;}
-                    if(is_clicked(BTN2)) ;
-                    if(is_clicked(BTN1)){name_pos = floorMod(name_pos+1, 3); set_scroll_offset();}
+                    if(is_clicked(BTN2)){add_Score(init_Score(name, score)); menu_page = MENU_MAIN; return;}
                     if(menu_page_changed) menu_gameover_init();
+                    if(is_clicked(BTN4)){name_pos = floorMod(name_pos-1, 3); set_scroll_offset();}
+                    if(is_clicked(BTN1)){name_pos = floorMod(name_pos+1, 3); set_scroll_offset();}
                     menu_gameover_tick();
                     break;
                 default:
@@ -191,6 +193,7 @@ void game_tick(){
         ball.dx = abs(ball.dx);
         if(!((ball.dy < 0 && yd <= 1) || (ball.dy > 0 && yd >= -1)))
             ball.dy = bound(-1.2, ball.dy+yd/2, 1.2);
+        score++;
     }
     ball.x += ball.dx; ball.y += ball.dy;
     if(CHEAT_MODE) ball.x += ball.x < -30 ? 170 : 0;
@@ -235,12 +238,10 @@ void btn_click(int btn_i){
 void btn_hold(int btn_i){
     switch(btn_i){
         case 3: // W
-            nyan.y -= NYAN_SPEED_Y;
-            nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
+            nyan.y = max(nyan.y-NYAN_SPEED_Y, 0);
             break;
         case 2: // S
-            nyan.y += NYAN_SPEED_Y;
-            nyan.y = bound(0, nyan.y, SCREEN_HEIGHT-nyan.h);
+            nyan.y = min(nyan.y+NYAN_SPEED_Y, SCREEN_HEIGHT-nyan.h);
             break;
         case 4: // A
             break;
@@ -271,10 +272,13 @@ void menu_main_tick(){
     draw_AnimUnit(&nyan);
 }
 void menu_scores_init(){
-
+    scoreboard = get_scores_page();
+    scoreboard_scroll = 0;
+    scoreboard_scroll_max = max(0, (get_scores_len()-4)*8);
 }
 void menu_scores_tick(){
-
+    screen_draw_box(0,50,SCREEN_HEIGHT,1,1);
+    screen_display_string(-scoreboard_scroll, 52, scoreboard);
 }
 void menu_gameover_init(){
     name_pos = 0;

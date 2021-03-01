@@ -57,11 +57,24 @@ int getpot();
 
 // math.c
 int round(float f);
+float min(float a, float b);
+float max(float a, float b);
 float bound(float min, float f, float max);
 float avg(float a, float b);
 float abs(float f);
 int floorMod(int d, int m);
 int indexOf(char c, char *str);
+
+// score.c
+#define MAX_SCORES 32
+typedef struct Score{
+    char name[4];
+    int score;
+} Score;
+Score init_Score(char * name, int score);
+void add_Score(Score s);
+int get_scores_len();
+char * get_scores_page();
 
 // textures.c
 extern uint8_t t_ball[11][11];
