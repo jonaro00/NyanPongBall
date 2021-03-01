@@ -45,31 +45,13 @@ char * get_scores_page(){
         s = scores[r];
         if(s.score == 0 && s.name[0] == 0)break;
         // Row format = "pp. NNN ssss\n"
+        // insert scoreboard position
         p = r + 1;
         if(p < 10) str[ro+1] = p + '0';
-        else{
-            i = ro;
-            cp = itoaconv(p);
-            while(*cp != 0){
-                str[i] = *cp;
-                cp++; i++;
-            }
-        }
+        else insert(itoaconv(p), str, ro, 0);
         str[ro+2] = '.';
-
-        i = ro+4;
-        cp = s.name;
-        while(*cp != 0){
-            str[i] = *cp;
-            cp++; i++;
-        }
-        i = ro+8;
-        cp = itoaconv(s.score);
-        while(*cp != 0){
-            str[i] = *cp;
-            cp++; i++;
-        }
-
+        insert(s.name, str, ro+4, 0); // insert name
+        insert(itoaconv(s.score), str, ro+8, 0); // insert score
         str[ro+12] = '\n';
         ro += 13;
     }

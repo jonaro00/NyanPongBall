@@ -23,25 +23,13 @@ uint8_t game_state = START, prev_game_state = START;
 #define MENU_GAMEOVER 2
 uint8_t menu_page = MENU_MAIN, prev_menu_page = MENU_MAIN;
 
-char menu_choices[][4][CHAR_SPACES] = {
-    { // MENU_MAIN
-        "4-A Scores",
-        "3-W ",
-        "2-S ",
-        "1-D Play",
-    },
-    { // MENU_SCORES
-        "4-A Back",
-        "3-W Up",
-        "2-S Down",
-        "1-D Play",
-    },
-    { // MENU_GAMEOVER
-        "4-A Left",
-        "3-W Skip",
-        "2-S Enter",
-        "1-D Right",
-    },
+char menu_choices[][CHAR_SPACES] = {
+    // MENU_MAIN
+    "4-A Scores\n3-W \n2-S \n1-D Play",
+    // MENU_SCORES
+    "4-A Back\n3-W Up\n2-S Down\n1-D Play",
+    // MENU_GAMEOVER
+    "4-A Left\n3-W Skip\n2-S Enter\n1-D Right",
 };
 const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!_-#$";
 char name[] = "AAA";
@@ -137,9 +125,7 @@ void main_tick(){
                     break;
             }
             // Print menu choices
-            int i;
-            for(i = 0; i < 4; i++)
-                screen_display_string(i*8, 0, menu_choices[menu_page][i]);
+            screen_display_string(0, 0, menu_choices[menu_page]);
             break;
 
         case GAME:
@@ -205,12 +191,8 @@ void game_tick(){
     screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1); // bot wall
     screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1); // right wall
 
-    char * ccc = itoaconv(score);
-    int i = 7;
-    while(*ccc != 0){
-        score_str[i] = *ccc;
-        ccc++; i++;
-    }
+    // Score counter
+    insert(itoaconv(score), score_str, 7, 1);
     screen_display_string(12, 50, score_str);
 
 

@@ -30,7 +30,6 @@ void menu_gameover_tick();
 #define ANIM_SPEED 4
 void quicksleep(int cyc);
 void num32asc(char *s, int n);
-char *itoaconv(int num);
 uint8_t spi_send_recv(uint8_t data);
 void display_init(void);
 extern uint8_t screen[SCREEN_HEIGHT][SCREEN_WIDTH];
@@ -63,7 +62,6 @@ float bound(float min, float f, float max);
 float avg(float a, float b);
 float abs(float f);
 int floorMod(int d, int m);
-int indexOf(char c, char *str);
 
 // score.c
 #define MAX_SCORES 32
@@ -75,6 +73,11 @@ Score init_Score(char * name, int score);
 void add_Score(Score s);
 int get_scores_len();
 char * get_scores_page();
+
+// string.c
+char *itoaconv(int num);
+int indexOf(char c, char *str);
+void insert(char * src, char * target, int i, uint8_t nullend);
 
 // textures.c
 extern uint8_t t_ball[11][11];

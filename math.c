@@ -31,12 +31,3 @@ int floorMod(int d, int m){
     if(m >= 0) return mod >= 0 ? mod : mod+m;
     else       return mod <  0 ? mod : mod+m;
 }
-
-int indexOf(char c, char *str){
-    int i = 0;
-    while(*str != 0){
-        if(*str == c) return i;
-        i++; str++;
-    }
-    return -1;
-}
