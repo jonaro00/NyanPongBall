@@ -221,9 +221,10 @@ void level_type0_update(){
     float yd = (ball.y+(ball.h-1)/2)-(nyan.y+(nyan.h-1)/2);
     if(ball.x+ball.w > SCREEN_WIDTH-1 && levels_completed%2==0) ball.dx = -abs(ball.dx); // right wall bounce
     else if(abs(ball.x - (nyan.x+nyan.w-3)) < 2 && // ball x at nyan nose
-            abs(yd) < nyan.h/2)                    // ball center within nyan y
+            abs(yd) < nyan.h/2 &&                  // ball center within nyan y
+            ball.dx < 0)                           // ball going left
     {   // Ball & nyan collision
-        ball.dx = abs(ball.dx);
+        ball.dx = -ball.dx;
         float mdy = 0;
         if(!((ball.dy < 0 && yd <= 1) || (ball.dy > 0 && yd >= -1)))
             mdy = yd / 3;
