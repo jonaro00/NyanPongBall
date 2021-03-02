@@ -17,6 +17,9 @@ uint8_t CHEAT_MODE = 0;
 #define GAME 2
 #define GAMEOVER 3
 uint8_t game_state = START, prev_game_state = START;
+uint8_t levels_completed, level_progress, level_type, level_transition;
+int8_t current_level;
+uint16_t score_req[] = {0, 15, 30, 50, 70, 100, 150, 200};
 
 #define MENU_MAIN 0
 #define MENU_SCORES 1
@@ -45,8 +48,9 @@ int scoreboard_scroll, scoreboard_scroll_max;
 Unit ball;
 #define BALL_MAX_SPEED_Y 1.2
 AnimUnit nyan;
-#define NYAN_SPEED_Y 0.6
+#define NYAN_FLY_SPEED 0.6
 int score;
+float scoreY, scoreX;
 char score_str[15] = "Score: ";
 
 // ### INTERRUPTS ### //
@@ -153,64 +157,114 @@ void main_tick(){
 void game_init(){
     game_ticks = 0;
     score = 0;
+    current_level = -1;
+    levels_completed = 0;
     init_bg();
-    init_Unit(&ball,16,40,0.8F,1.7F,11,11,&t_ball[0][0],1);
-    init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+    level_type0_init();
 }
 void game_tick(){
-    CHEAT_MODE = getsw() & BTN4;
+    CHEAT_MODE = getsw() & BTN4; // Switch 4 up = cheat mode
 
+    //# LEVEL PROGRESSION #//
+    level_progress = 8*(score-score_req[current_level])/(score_req[current_level+1]-score_req[current_level]);
+    if(level_progress) PORTESET = (1 << 8-level_progress);
+    else               PORTECLR = 0xff;
+    if(score >= score_req[current_level+1] && !level_transition){
+        // initiate move to next level
+        level_transition = 1;
+        levels_completed = (uint8_t)min(current_level+1, sizeof score_req);
+    }
+
+    //# MOVEMENT, COLLISIONS, GAMESTATE #//
+    // Background
     update_bg();
+    // Level objects
+    if(!level_type) level_type0_update();
+    else            level_type1_update();
 
-    // ### MOVEMENT & COLLISIONS ### //
+    //# GRAPHICS #//
+    // Score counter
+    insert(itoaconv(score), score_str, 7, 1);
+    screen_display_string(scoreY, scoreX, score_str);
+    // Background
+    draw_bg();
+    // Level objects
+    if(!level_type) level_type0_draw();
+    else            level_type1_draw();
+    // Player
+    draw_AnimUnit(&nyan);
+
+    game_ticks++;
+}
+// Pong
+void level_type0_init(){
+    level_type = 0;
+    current_level++;
+    scoreY = 12; scoreX = 50;
+    init_Unit(&ball,16,40,0.8F,1.7F+current_level*0.2,11,11,&t_ball[0][0],1);
+    init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+}
+void level_type0_update(){
+    if(ball.x > SCREEN_WIDTH+80 && level_transition){
+        level_transition = 0;
+        level_type1_init();
+        return;
+    }
     // Player
     if(is_clicked(BTN4)) btn_click(4);
-    if(is_clicked(BTN3)) btn_click(3);
-    if(is_clicked(BTN2)) btn_click(2);
     if(is_clicked(BTN1)) btn_click(1);
-    if(is_pressed(BTN4)) btn_hold(4);
     if(is_pressed(BTN3)) btn_hold(3);
     if(is_pressed(BTN2)) btn_hold(2);
-    if(is_pressed(BTN1)) btn_hold(1);
     // Ball
     if     (ball.y < 1)                       ball.dy = abs(ball.dy); // top wall bounce
     else if(ball.y+ball.h >= SCREEN_HEIGHT-1) ball.dy = -abs(ball.dy); // bot wall bounce
     float yd = (ball.y+(ball.h-1)/2)-(nyan.y+(nyan.h-1)/2);
-    if(ball.x+ball.w > SCREEN_WIDTH-1 && ball.dx > 0) ball.dx = -ball.dx; // right wall bounce
+    if(ball.x+ball.w > SCREEN_WIDTH-1 && levels_completed%2==0) ball.dx = -abs(ball.dx); // right wall bounce
     else if(abs(ball.x - (nyan.x+nyan.w-3)) < 2 && // ball x at nyan nose
             abs(yd) < nyan.h/2)                    // ball center within nyan y
     {   // Ball & nyan collision
         ball.dx = abs(ball.dx);
-        float my = 0;
+        float mdy = 0;
         if(!((ball.dy < 0 && yd <= 1) || (ball.dy > 0 && yd >= -1)))
-            my = yd / 3;
+            mdy = yd / 3;
         else if((ball.dy < 0 && yd <= -2) || (ball.dy > 0 && yd >= 2))
-            my = yd / 5;
-        ball.dy = bound(-BALL_MAX_SPEED_Y, ball.dy+my, BALL_MAX_SPEED_Y);
+            mdy = yd / 5;
+        ball.dy = bound(-BALL_MAX_SPEED_Y, ball.dy+mdy, BALL_MAX_SPEED_Y);
 
         score++;
     }
-    ball.x += ball.dx; ball.y += ball.dy;
-    if(CHEAT_MODE) ball.x += ball.x < -30 ? 170 : 0;
+    move_Unit(&ball);
+    if(CHEAT_MODE && ball.x < -30) ball.x += 170;
 
     if(ball.x < -40){game_state = GAMEOVER; return;}
-
-    // ### GRAPHICS ### //
-    // Score counter
-    insert(itoaconv(score), score_str, 7, 1);
-    screen_display_string(12, 50, score_str);
-
-    // Background
-    draw_bg();
-
+}
+void level_type0_draw(){
     // Walls
-    screen_draw_box(0,30,1,SCREEN_WIDTH,1);
-    screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH,1);
-    screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1);
+    screen_draw_box(0,30,1,SCREEN_WIDTH-30,1);
+    screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH-30,1);
+    if(!level_transition)
+        screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1);
 
     draw_Unit(&ball);
-    draw_AnimUnit(&nyan);
-    game_ticks++;
+}
+// Dodgeball
+void level_type1_init(){
+    level_type = 1;
+    current_level++;
+    scoreY = 0; scoreX = 0;
+    init_AnimUnit(&nyan,SCREEN_HEIGHT-15,(SCREEN_WIDTH-23)/2,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+
+}
+void level_type1_update(){
+    if(is_clicked(BTN4)) btn_click(4);
+    if(is_clicked(BTN3)) btn_click(3);
+    if(is_clicked(BTN2)) btn_click(2);
+    if(is_clicked(BTN1)) btn_click(1);
+}
+void level_type1_draw(){
+    // Ground
+    screen_draw_box(SCREEN_HEIGHT-1,0,1,SCREEN_WIDTH,1);
+
 }
 
 void btn_click(int btn_i){
@@ -232,10 +286,10 @@ void btn_click(int btn_i){
 void btn_hold(int btn_i){
     switch(btn_i){
         case 3: // W
-            nyan.y = max(nyan.y-NYAN_SPEED_Y, 0);
+            nyan.y = max(nyan.y-NYAN_FLY_SPEED, 0);
             break;
         case 2: // S
-            nyan.y = min(nyan.y+NYAN_SPEED_Y, SCREEN_HEIGHT-nyan.h);
+            nyan.y = min(nyan.y+NYAN_FLY_SPEED, SCREEN_HEIGHT-nyan.h);
             break;
         case 4: // A
             break;
@@ -247,6 +301,7 @@ void btn_hold(int btn_i){
 }
 void gameover_init(){
     cooldown = 70;
+    PORTECLR = 0xff;
     DEBUG_ADDR = &cooldown;
 }
 void gameover_tick(){
