@@ -45,8 +45,9 @@ char * scoreboard;
 int scoreboard_scroll, scoreboard_scroll_max;
 
 
-Unit ball;
+AnimUnit ball;
 #define BALL_MAX_SPEED_Y 1.2
+float ball_prev_dy = -1, ball_prev_dx = -1;
 AnimUnit nyan;
 #define NYAN_FLY_SPEED 0.6
 int score;
@@ -201,8 +202,8 @@ void level_type0_init(){
     level_type = 0;
     current_level++;
     scoreY = 12; scoreX = 50;
-    init_Unit(&ball,16,40,0.8F,1.7F+current_level*0.2,11,11,&t_ball[0][0],1);
-    init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+    init_AnimUnit(&ball,16,40,0.8F,1.7F+current_level*0.2,11,11,&t_ball[0][0][0],1,BALL_FRAMES,32);
+    init_AnimUnit(&nyan,16,0,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES,4);
 }
 void level_type0_update(){
     if(ball.x > SCREEN_WIDTH+80 && level_transition){
@@ -234,6 +235,13 @@ void level_type0_update(){
 
         score++;
     }
+    // change spin direction and speed
+    if(sign(ball_prev_dy) != sign(ball.dy) || sign(ball_prev_dx) != sign(ball.dx)){
+        ball.xdir = ixor(ball.dy, ball.dx);
+        ball.period = 48-40*abs(ball.dy/BALL_MAX_SPEED_Y);
+    }
+    ball_prev_dy = ball.dy; ball_prev_dx = ball.dx;
+
     move_Unit(&ball);
     if(CHEAT_MODE && ball.x < -30) ball.x += 170;
 
@@ -246,14 +254,14 @@ void level_type0_draw(){
     if(!level_transition)
         screen_draw_box(0,SCREEN_WIDTH-1,SCREEN_HEIGHT,1,1);
 
-    draw_Unit(&ball);
+    draw_AnimUnit(&ball);
 }
 // Dodgeball
 void level_type1_init(){
     level_type = 1;
     current_level++;
     scoreY = 0; scoreX = 0;
-    init_AnimUnit(&nyan,SCREEN_HEIGHT-15,(SCREEN_WIDTH-23)/2,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+    init_AnimUnit(&nyan,SCREEN_HEIGHT-15,(SCREEN_WIDTH-23)/2,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES,4);
 
 }
 void level_type1_update(){
@@ -312,13 +320,15 @@ void gameover_tick(){
     menu_page = MENU_GAMEOVER;
 }
 void menu_main_init(){
-    init_AnimUnit(&nyan,17,64,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES);
+    init_AnimUnit(&ball,20,89,0,0,11,11,&t_ball[0][0][0],1,BALL_FRAMES,8);
+    init_AnimUnit(&nyan,17,64,0,0,14,23,&t_nyancat[0][0][0],1,NYANCAT_FRAMES,4);
 }
 void menu_main_tick(){
     screen_draw_box(0,61,SCREEN_HEIGHT,1,1);
-    screen_display_string(0,  63,  "Nyan");
-    screen_display_string(8,  85,  "Pong");
-    screen_display_string(16, 107, "Ball");
+    screen_display_string(0,   67, "Nyan");
+    screen_display_string(10,  87, "Pong");
+    screen_display_string(20, 107, "Ball");
+    draw_AnimUnit(&ball);
     draw_AnimUnit(&nyan);
 }
 void menu_scores_init(){

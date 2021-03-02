@@ -139,7 +139,7 @@ void screen_display_texture(int y, int x, uint8_t h, uint8_t w, uint8_t *t, int 
     uint8_t p;
     for(i = 0; i < h; i++){
         for(j = 0; j < w; j++){
-            jj = xdir > 0 ? j : w-1-j;
+            jj = xdir >= 0 ? j : w-1-j;
             sy = y+i; sx = x+jj;
             if(!is_on_screen(sy, sx)) continue;
             p = *(t+i*w+j);

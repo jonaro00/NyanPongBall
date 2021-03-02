@@ -72,6 +72,8 @@ float max(float a, float b);
 float bound(float min, float f, float max);
 float avg(float a, float b);
 float abs(float f);
+int sign(float f);
+int ixor(float a, float b);
 int floorMod(int d, int m);
 
 // score.c
@@ -91,7 +93,8 @@ int indexOf(char c, char *str);
 void insert(char * src, char * target, int i, uint8_t nullend);
 
 // textures.c
-extern uint8_t t_ball[11][11];
+#define BALL_FRAMES 4
+extern uint8_t t_ball[BALL_FRAMES][11][11];
 #define NYANCAT_FRAMES 4
 extern uint8_t t_nyancat[NYANCAT_FRAMES][14][23];
 
@@ -120,6 +123,7 @@ typedef struct AnimUnit{
     int xdir;
     uint8_t frames;
     uint8_t frame;
+    uint8_t period;
 } AnimUnit;
-void init_AnimUnit(AnimUnit * u, float y, float x, float dy, float dx, uint8_t h, uint8_t w, uint8_t * texture, int xdir, uint8_t frames);
+void init_AnimUnit(AnimUnit * u, float y, float x, float dy, float dx, uint8_t h, uint8_t w, uint8_t * texture, int xdir, uint8_t frames, uint8_t period);
 void draw_AnimUnit(AnimUnit * u);
