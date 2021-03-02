@@ -93,8 +93,9 @@ void main_tick(){
         if(is_clicked(BTN4|BTN3|BTN2|BTN1))
             game_state = MENU;
         screen_fill(1); // screen white
-        screen_draw_box(8,8,SCREEN_HEIGHT-16,SCREEN_WIDTH-16,0); // black box in middle
-        screen_display_string(12,23,"Nyan Pong Ball"); // title
+        screen_draw_box(2,2,SCREEN_HEIGHT-4,SCREEN_WIDTH-4,0); // black box in middle
+        screen_display_string(6,23,"Nyan Pong Ball"); // title
+        screen_display_string(21,60,"by jonaro00"); // subtitle
         screen_render();
         return;
     }
