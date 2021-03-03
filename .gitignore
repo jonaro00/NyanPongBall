@@ -6,5 +6,6 @@
 *.pdn
 *.gdoc
 *.d
+*.py
 
 .vscode/
