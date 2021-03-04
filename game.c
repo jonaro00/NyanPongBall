@@ -327,14 +327,19 @@ void level_type1_update(){
     // INPUT
     if(is_clicked(BTN3)) // click W (jump)
         if(nyan.y == SCREEN_HEIGHT-nyan.h-1)
-            nyan.dy = -2.2;
-    if(is_clicked(BTN2)) // click S (shoot)
-        if(!bullet.active)
-            init_Unit(&bullet, nyan.y+5, nyan.xdir==1?nyan.x+nyan.w-3:nyan.x-5, 0, sign(nyan.xdir)*0.5F, 0, sign(nyan.xdir)*0.1F, 7, 8, &t_bullet[0][0], nyan.xdir);
-    if(is_clicked(BTN4)) // click A (turn left)
-        nyan.xdir = -1;
-    if(is_clicked(BTN1)) // click D (turn right)
-        nyan.xdir = 1;
+            nyan.dy = -2.2F;
+    if(is_clicked(BTN2)) // click S (fast fall)
+        nyan.dy = 1.3F;
+    if(is_clicked(BTN4)) // click A (turn left / shoot)
+        if(nyan.xdir == 1)
+            nyan.xdir = -1;
+        else if(!bullet.active)
+            init_Unit(&bullet, nyan.y+5, nyan.x-5, 0, -0.5F, 0, -0.1F, 7, 8, &t_bullet[0][0], -1);
+    if(is_clicked(BTN1)) // click D (turn right / shoot)
+        if(nyan.xdir == -1)
+            nyan.xdir = 1;
+        else if(!bullet.active)
+            init_Unit(&bullet, nyan.y+5, nyan.x+nyan.w-3, 0, 0.5F, 0, 0.1F, 7, 8, &t_bullet[0][0], 1);
 
     // MOVE NYAN & BULLET
     move_Unit(&nyan);
