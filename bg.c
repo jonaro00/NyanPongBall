@@ -13,13 +13,13 @@ void init_bg(){
     int i;
     for(i = 0; i < ss; i++){
         Unit s;
-        init_Unit(&s, (int)abs((i%2==0?i:-i)*i*37/(ss/2-i+1.1F))%(SCREEN_HEIGHT-2)+1, floorMod(i*i*i*-185,ss*16), 0, -0.3F, 1, 1, &t_ss[0][0], 1);
+        init_Unit(&s, (int)abs((i%2==0?i:-i)*i*37/(ss/2-i+1.1F))%(SCREEN_HEIGHT-2)+1, floorMod(i*i*i*-185,ss*16),0,-0.3F,0,0,1,1,&t_ss[0][0],1);
         small_stars[i] = s;
     }
     for(i = 0; i < st; i++){
         Unit s;
         int ii = st - i;
-        init_Unit(&s, (int)abs((ii%2==0?ii:-ii)*ii*37/(ss/2-ii+1.1F))%(SCREEN_HEIGHT-2)+1, floorMod(ii*ii*i*-185,ss*28), 0, -0.5F, 2, 2, &t_s[0][0], 1);
+        init_Unit(&s, (int)abs((ii%2==0?ii:-ii)*ii*37/(ss/2-ii+1.1F))%(SCREEN_HEIGHT-2)+1, floorMod(ii*ii*i*-185,ss*28),0,-0.5F,0,0,2,2,&t_s[0][0],1);
         stars[i] = s;
     }
 }

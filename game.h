@@ -12,6 +12,7 @@ extern const uint8_t const font[128*8];
 
 // game.c
 #define FPS 60
+extern uint32_t tick_start;
 extern int* DEBUG_ADDR;
 void loop();
 void main_tick();
@@ -23,8 +24,6 @@ void level_type0_draw();
 void level_type1_init();
 void level_type1_update();
 void level_type1_draw();
-void btn_click(int btn_i);
-void btn_hold(int btn_i);
 void gameover_init();
 void gameover_tick();
 void menu_main_init();
@@ -75,6 +74,8 @@ float abs(float f);
 int sign(float f);
 int ixor(float a, float b);
 int floorMod(int d, int m);
+float pow(float a, int b);
+float random();
 
 // score.c
 #define MAX_SCORES 32
@@ -97,26 +98,35 @@ void insert(char * src, char * target, int i, uint8_t nullend);
 extern uint8_t t_ball[BALL_FRAMES][11][11];
 #define NYANCAT_FRAMES 4
 extern uint8_t t_nyancat[NYANCAT_FRAMES][14][23];
+extern uint8_t t_bullet[7][8];
 
 // unit.c
 typedef struct Unit{
+    uint8_t active;
+    uint8_t alive;
     float y;
     float x;
     float dy;
     float dx;
+    float ay;
+    float ax;
     uint8_t h;
     uint8_t w;
     uint8_t * texture;
     int xdir;
 } Unit;
-void init_Unit(Unit * u, float y, float x, float dy, float dx, uint8_t h, uint8_t w, uint8_t * texture, int xdir);
+void init_Unit(Unit * u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t * texture, int xdir);
 void move_Unit(Unit * u);
 void draw_Unit(Unit * u);
 typedef struct AnimUnit{
+    uint8_t active;
+    uint8_t alive;
     float y;
     float x;
     float dy;
     float dx;
+    float ay;
+    float ax;
     uint8_t h;
     uint8_t w;
     uint8_t * texture;
@@ -125,5 +135,7 @@ typedef struct AnimUnit{
     uint8_t frame;
     uint8_t period;
 } AnimUnit;
-void init_AnimUnit(AnimUnit * u, float y, float x, float dy, float dx, uint8_t h, uint8_t w, uint8_t * texture, int xdir, uint8_t frames, uint8_t period);
+void init_AnimUnit(AnimUnit * u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t * texture, int xdir, uint8_t frames, uint8_t period);
 void draw_AnimUnit(AnimUnit * u);
+uint8_t collides(Unit * u1, Unit * u2);
+uint8_t Unit_on_screen(Unit * u);
