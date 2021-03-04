@@ -193,9 +193,6 @@ void game_tick(){
     }
 
     //# MOVEMENT, COLLISIONS, GAMESTATE #//
-    // Background
-    update_bg();
-    // Level objects
     if(!level_type) level_type0_update();
     else            level_type1_update();
 
@@ -203,8 +200,6 @@ void game_tick(){
     // Score counter
     insert(itoaconv(score), score_str, 7, 1);
     screen_display_string(scoreY, scoreX, score_str);
-    // Background
-    draw_bg();
     // Level objects
     if(!level_type) level_type0_draw();
     else            level_type1_draw();
@@ -228,6 +223,8 @@ void level_type0_update(){
             return;
         }
     }
+    // Background
+    update_star_bg();
     // Player
     if(is_pressed(BTN3)) // press W (fly up)
         nyan.y = max(nyan.y-NYAN_FLY_SPEED, 0);
@@ -281,6 +278,8 @@ void level_type0_update(){
     }
 }
 void level_type0_draw(){
+    // Background
+    draw_star_bg();
     // Walls
     screen_draw_box(0,30,1,SCREEN_WIDTH-30,1);
     screen_draw_box(SCREEN_HEIGHT-1,30,1,SCREEN_WIDTH-30,1);
@@ -309,6 +308,8 @@ void level_type1_update(){
     if(!nyan.alive && !Unit_on_screen(&nyan)){
         game_state = GAMEOVER; return;
     }
+    // Background
+    update_rain_bg();
     // Transition check
     uint8_t i;
     for(i = 0; i < n_balls; i++)
@@ -407,6 +408,8 @@ void level_type1_update(){
     }
 }
 void level_type1_draw(){
+    // Background
+    draw_rain_bg();
     // Ground
     screen_draw_box(SCREEN_HEIGHT-1,0,1,SCREEN_WIDTH,1);
 

@@ -1,8 +1,10 @@
 
 // bg.c
 void init_bg();
-void update_bg();
-void draw_bg();
+void update_star_bg();
+void draw_star_bg();
+void update_rain_bg();
+void draw_rain_bg();
 
 // ei.S
 void enable_interrupt();
