@@ -12,7 +12,9 @@ uint32_t level_started;
 uint8_t DEBUG_MODE = 0;
 int* DEBUG_ADDR = &ticks;
 int debug_dummy;
-uint8_t CHEAT_MODE = 0;
+uint8_t cheat_mode(){
+    return getsw() & BTN4; // Switch 4 up = cheat mode is on
+}
 
 #define START 0
 #define MENU 1
@@ -177,7 +179,6 @@ void game_init(){
     level_type0_init();
 }
 void game_tick(){
-    CHEAT_MODE = getsw() & BTN4; // Switch 4 up = cheat mode
     if(getsw() & BTN3 && ticks % 5 == 0) score++;  // Switch 3 up = free points
 
     //# LEVEL PROGRESSION #//
@@ -270,7 +271,7 @@ void level_type0_update(){
     move_Unit(&ball);
 
     if(ball.x < -40){
-        if(CHEAT_MODE) ball.x += 170;
+        if(cheat_mode()) ball.x += 170;
         else{
             game_state = GAMEOVER;
             return;
@@ -371,7 +372,7 @@ void level_type1_update(){
                 b->alive = 0;
                 score++;
             }
-            else if(!CHEAT_MODE){ // Death
+            else if(!cheat_mode()){ // Death
                 nyan.alive = 0;
                 nyan.dy = -2; nyan.ay = 0;
                 nyan.dx = sign(b->dx)*3;
