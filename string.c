@@ -2,7 +2,8 @@
 #include <stdint.h>
 #include "game.h"
 
-#define ITOA_BUFSIZ (24)
+// Returns string with num in decimal representation.
+#define ITOA_BUFSIZ 24
 char *itoaconv(int num){
     register int i, sign;
     static char itoa_buffer[ITOA_BUFSIZ];
@@ -34,6 +35,8 @@ char *itoaconv(int num){
     return &itoa_buffer[i + 1];
 }
 
+// Returns index of first occurence of c in str.
+// Returns -1 if not present.
 int indexOf(char c, char *str){
     int i = 0;
     while(*str != 0){
@@ -43,7 +46,9 @@ int indexOf(char c, char *str){
     return -1;
 }
 
-void insert(char * src, char * target, int i, uint8_t nullend){
+// Inserts src into target, starting from index i.
+// Optionally inserts NULL terminator.
+void insert(char *src, char *target, int i, uint8_t nullend){
     while(*src != 0){
         target[i] = *src;
         src++; i++;

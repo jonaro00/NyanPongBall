@@ -2,9 +2,11 @@
 #include <stdint.h>
 #include "game.h"
 
+// List of the highest scores, sorted high->low
 Score scores[MAX_SCORES];
 
-Score init_Score(char * name, int score){
+// Constructor for struct Score.
+Score init_Score(char *name, int score){
     int i;
     Score s;
     for(i = 0; i < 3; i++)
@@ -13,6 +15,9 @@ Score init_Score(char * name, int score){
     s.score = score;
     return s;
 }
+// Internal method.
+// Inserts Score s at the right position.
+// Then recursively moves all scores below down one step.
 void _add_Score(Score s, int i_from){
     int i;
     Score tmp;
@@ -25,7 +30,10 @@ void _add_Score(Score s, int i_from){
         break;
     }
 }
+// Inserts Score s into the leaderboard.
 void add_Score(Score s){_add_Score(s,0);}
+
+// Returns amount of non-null scoreboard entries
 int get_scores_len(){
     int i, c = 0;
     for(i = 0; i < MAX_SCORES; i++)
@@ -33,7 +41,8 @@ int get_scores_len(){
             c++;
     return c;
 }
-char * get_scores_page(){
+// Returns string with all scoreboard entries separated by newlines.
+char *get_scores_page(){
     static char str[MAX_SCORES * 14];
     char * cp;
     int i, ro = 0;

@@ -10,12 +10,12 @@ void draw_rain_bg();
 void enable_interrupt();
 
 // font.c
-extern const uint8_t const font[128*8];
+extern const uint8_t const font[128*6];
 
 // game.c
 #define FPS 60
 extern uint32_t tick_start;
-extern int* DEBUG_ADDR;
+extern int *DEBUG_ADDR;
 void loop();
 void main_tick();
 void game_init();
@@ -43,7 +43,7 @@ void menu_gameover_tick();
 void quicksleep(int cyc);
 void num32asc(char *s, int n);
 uint8_t spi_send_recv(uint8_t data);
-void display_init(void);
+void display_init();
 extern uint8_t screen[SCREEN_HEIGHT][SCREEN_WIDTH];
 void screen_fill(uint8_t p);
 int is_on_screen(int y, int x);
@@ -53,7 +53,7 @@ void screen_set_strip(int y, int x, uint8_t b);
 void screen_display_string(int y, int x, char *s);
 void screen_display_texture(int y, int x, uint8_t h, uint8_t w, uint8_t *t, int xdir);
 void screen_draw_box(int y, int x, uint8_t h, uint8_t w, uint8_t p);
-void print_debug(const volatile int* addr);
+void print_debug(const volatile int *addr);
 
 // io.c
 #define BTN4 0b1000
@@ -85,15 +85,15 @@ typedef struct Score{
     char name[4];
     int score;
 } Score;
-Score init_Score(char * name, int score);
+Score init_Score(char *name, int score);
 void add_Score(Score s);
 int get_scores_len();
-char * get_scores_page();
+char *get_scores_page();
 
 // string.c
 char *itoaconv(int num);
 int indexOf(char c, char *str);
-void insert(char * src, char * target, int i, uint8_t nullend);
+void insert(char *src, char *target, int i, uint8_t nullend);
 
 // textures.c
 #define BALL_FRAMES 4
@@ -114,12 +114,12 @@ typedef struct Unit{
     float ax;
     uint8_t h;
     uint8_t w;
-    uint8_t * texture;
+    uint8_t *texture;
     int xdir;
 } Unit;
-void init_Unit(Unit * u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t * texture, int xdir);
-void move_Unit(Unit * u);
-void draw_Unit(Unit * u);
+void init_Unit(Unit *u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t *texture, int xdir);
+void move_Unit(Unit *u);
+void draw_Unit(Unit *u);
 typedef struct AnimUnit{
     uint8_t active;
     uint8_t alive;
@@ -131,13 +131,13 @@ typedef struct AnimUnit{
     float ax;
     uint8_t h;
     uint8_t w;
-    uint8_t * texture;
+    uint8_t *texture;
     int xdir;
     uint8_t frames;
     uint8_t frame;
     uint8_t period;
 } AnimUnit;
-void init_AnimUnit(AnimUnit * u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t * texture, int xdir, uint8_t frames, uint8_t period);
-void draw_AnimUnit(AnimUnit * u);
-uint8_t collides(Unit * u1, Unit * u2);
-uint8_t Unit_on_screen(Unit * u);
+void init_AnimUnit(AnimUnit *u, float y, float x, float dy, float dx, float ay, float ax, uint8_t h, uint8_t w, uint8_t *texture, int xdir, uint8_t frames, uint8_t period);
+void draw_AnimUnit(AnimUnit *u);
+uint8_t collides(Unit *u1, Unit *u2);
+uint8_t unit_on_screen(Unit *u);

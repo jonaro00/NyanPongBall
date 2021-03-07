@@ -14,6 +14,7 @@ float max(float a, float b){
     return a > b ? a : b;
 }
 
+// Returns f if within min/max boundraries, else returns the broken boundrary.
 float bound(float min, float f, float max){
     return (f < min ? min : (f > max ? max : f));
 }
@@ -26,10 +27,13 @@ float abs(float f){
     return f >= 0 ? f : -f;
 }
 
+// Returns 1/0/-1 based on sign of f.
 int sign(float f){
     return f > 0 ? 1 : (f < 0 ? -1 : 0);
 }
 
+// Like XOR, but for positive/negative integers instead of 1/0.
+// Returns 1 or -1.
 int ixor(float a, float b){
     return ((sign(a)>=0 && sign(b)<0) || (sign(a)<0 && sign(b)>=0)) ? 1 : -1;
 }
@@ -51,7 +55,10 @@ float pow(float a, int b){
     return c;
 }
 
+// Pseudo-random generator
+
 uint32_t seed = 0;
+// Returns 32 pseudo-random bits.
 uint32_t xorshifter(){
     if(!seed) seed = tick_start;
     int i;
@@ -62,6 +69,7 @@ uint32_t xorshifter(){
     }
     return seed;
 }
+// Returns pseudo-random float value in range [0, 1).
 float random(){
     uint32_t r = xorshifter();
     int i;

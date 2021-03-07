@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "game.h"
 
+// Arrays and textures for background particles
 #define ss 16
 Unit small_stars[ss];
 uint8_t t_ss[1][1] = {{1}};
@@ -12,6 +13,7 @@ uint8_t t_s[2][2] = {{1,1},{1,1}};
 Unit drops[rd];
 uint8_t t_rd[3][1] = {{1},{1},{1}};
 
+// Randomly places stars and raindrops on background (can be outside of screen).
 void init_bg(){
     int i;
     Unit s;
@@ -28,9 +30,10 @@ void init_bg(){
         drops[i] = s;
     }
 }
+// Moves all stars horizontally.
 void update_star_bg(){
     int i;
-    Unit * s;
+    Unit *s;
     for(i = 0; i < ss; i++){
         s = &small_stars[i];
         if(s->x < -1) s->x += ss*16;
@@ -42,6 +45,7 @@ void update_star_bg(){
         move_Unit(s);
     }
 }
+// Draws all stars.
 void draw_star_bg(){
     int i;
     for(i = 0; i < ss; i++)
@@ -49,15 +53,17 @@ void draw_star_bg(){
     for(i = 0; i < st; i++)
         draw_Unit(&stars[i]);
 }
+// Moves all raindrops vertically.
 void update_rain_bg(){
     int i;
-    Unit * s;
+    Unit *s;
     for(i = 0; i < rd; i++){
         s = &drops[i];
         if(s->y > SCREEN_HEIGHT) s->y -= rd*4;
         move_Unit(s);
     }
 }
+// Draws all raindrops.
 void draw_rain_bg(){
     int i;
     for(i = 0; i < rd; i++)
