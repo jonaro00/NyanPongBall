@@ -6,7 +6,7 @@ Demo video #1: [https://youtu.be/GnXHa3-83lQ](https://youtu.be/GnXHa3-83lQ)
 
 ---
 
-![Setup and main menu](https://lh3.googleusercontent.com/hqM7MCUubDgrz9QjvfC5-n7iprNlfNY33awuMt47ydhWBGlI651qFXOGdEYXxhoAYk9mDXlPC5k8NoyVmZdwT3prZm8ETIMLXRftvhOD-lZwKTFyCnqRIY-xoy5w9WLRq5-YO0DIbDeOUAOK3ui2mXDfT8Y0xDdqKUnVFyiHtJvNcnFQlA6mHUGhazDxKx1bdwoI_FZXE6rvCLaON9DyLivLcPFLgXV_2y7TAKip23QDlHCirWcCLeCe2lLQ4NQ0i7E9WEiXl1kxl3ZA_dznV0yTdRoqFBRIyKfe9JINl_krSajGa630O-DPrvFOKmIrxbszJSflxuV6QbWMthTqCHwgHZQKSsoImsUz-j_LWlVLohayit71oVX_Ik-i3AZPu1nDnykRfzTK1XHxYgNVtOpD-37nxu7NqF7nxny_8GrNYu69KJFpg2Fc7cWh-AsRUCT2A3MnRojCK2cf8c26Nv6fmgVdaJCxwqUgb8AUhrjjq7_m9JLzxxd2ZlBwo1VlMlNCVuYRahILKm_8sXLZbiftr61NnNrRZvlbUZE5oO_v3lfEXoCcewqMaJp5A008wHa4L_EkmqrA9IigZSGFWlTNeKWOUmjj0E6RK4LjsHAYUJvC13L_huSLJ6KutAXJKF5zt6IaI8LeG0ntn5L9tFLyXvFQBM54xo2-nUae4FzxfXYjM2b5Ypnq5GOmleo=w727-h969-no?authuser=0 "Setup and main menu")
+![Hardware setup and main menu](https://user-images.githubusercontent.com/54029719/110346726-20ae2000-8030-11eb-8b38-94ccc8a1311b.png)
 
 ---
 
